@@ -1,182 +1,143 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Bugün üzgün müsün?</title>
-  <style>
-    :root{
-      --bg1:#0d1b3d;--bg2:#123a6d;--card:rgba(255,255,255,0.1);--text:#eaf2ff;
-      --btn:#e8f0ff;--btnText:#0f2a55;--btnNo:#ffe8ec;--btnNoText:#6b1020;
-    }
-    *{box-sizing:border-box}
-    html,body{height:100%;margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:var(--text);-webkit-tap-highlight-color:transparent}
-    body{
-      background:
-        radial-gradient(120px 120px at 85% 15%, #fffdf5 0%, #fff3b8 25%, transparent 26%),
-        radial-gradient(2px 2px at 10% 20%, #ffffffaa 50%, transparent 51%),
-        radial-gradient(1.5px 1.5px at 20% 35%, #ffffff99 50%, transparent 51%),
-        radial-gradient(1.8px 1.8px at 30% 10%, #ffffffaa 50%, transparent 51%),
-        radial-gradient(1.2px 1.2px at 65% 30%, #ffffff88 50%, transparent 51%),
-        radial-gradient(1.6px 1.6px at 75% 22%, #ffffffaa 50%, transparent 51%),
-        linear-gradient(180deg,var(--bg2),var(--bg1));
-      background-attachment:fixed;display:grid;place-items:center;padding:16px;
-    }
-    .card{
-      width:100%;max-width:540px;background:var(--card);backdrop-filter:blur(6px);
-      border:1px solid rgba(255,255,255,0.18);border-radius:18px;padding:22px 20px;
-      box-shadow:0 12px 30px rgba(0,0,0,0.35);position:relative;overflow:hidden;
-      touch-action:none;
-    }
-    h1{margin:0 0 16px;font-size:clamp(20px,5vw,28px);font-weight:700;text-align:center}
-    .actions{position:relative;height:100px;margin-top:8px;overflow:hidden}
-    button{
-      appearance:none;border:0;border-radius:14px;padding:14px 16px;font-size:16px;
-      font-weight:700;cursor:pointer;box-shadow:0 6px 16px rgba(0,0,0,0.25);
-      width:112px;position:absolute;user-select:none
-    }
-    #btn-evet{background:var(--btn);color:var(--btnText);left:0;top:0;z-index:2;transition:none}
-    #btn-hayir{background:var(--btnNo);color:var(--btnNoText);right:0;top:0;z-index:1;transition:transform .08s ease, box-shadow .15s ease}
-    #btn-hayir:hover{box-shadow:0 8px 20px rgba(0,0,0,0.35)}
-    #btn-hayir:active{transform:translateY(1px) scale(.98)}
-    .result{margin-top:18px;padding:12px 14px;border-radius:12px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.18);font-size:15px;text-align:center;min-height:22px}
-    @media(max-width:380px){button{width:96px;padding:12px 10px}.actions{height:110px}}
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Üzgün Hissettin Mi?</title>
+    <style>
+        body {
+            background: linear-gradient(180deg, #1e90ff, #000066);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+            position: relative;
+            touch-action: none; /* Prevent default touch behaviors */
+        }
+        #moon {
+            position: absolute;
+            top: 2vh;
+            width: 15vmin;
+            height: 15vmin;
+            background: radial-gradient(circle at 70% 30%, #f0e68c 40%, transparent 40%);
+            border-radius: 50%;
+            box-shadow: inset -3vmin 0 0 red;
+        }
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 0 5px rgba(255, 255, 255, 0.8);
+            animation: twinkle 1.5s infinite alternate;
+        }
+        @keyframes twinkle {
+            from { opacity: 0.5; }
+            to { opacity: 1; }
+        }
+        #question {
+            font-size: clamp(1.5rem, 5vw, 2rem);
+            color: white;
+            margin-bottom: 3vh;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            z-index: 1;
+            text-align: center;
+            padding: 0 10px;
+        }
+        .button {
+            padding: clamp(8px, 2vw, 12px) clamp(15px, 4vw, 20px);
+            font-size: clamp(1rem, 3vw, 1.2rem);
+            margin: 1.5vh;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            background-color: #fff;
+            color: #333;
+            position: relative;
+            z-index: 1;
+            touch-action: none; /* Prevent default touch behaviors */
+        }
+        #message {
+            display: none;
+            font-size: clamp(1.2rem, 4vw, 1.5rem);
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            margin-top: 3vh;
+            z-index: 1;
+            text-align: center;
+            padding: 0 10px;
+        }
+    </style>
 </head>
 <body>
-  <main class="card" role="group" aria-label="Duygu durumu sorusu">
-    <h1>Bugün üzgün müsün?</h1>
-    <div class="actions" id="actions">
-      <button id="btn-evet" type="button" aria-label="Evet">Evet</button>
-      <button id="btn-hayir" type="button" aria-label="Hayır">Hayır</button>
-    </div>
-    <div class="result" id="result" aria-live="polite"></div>
-  </main>
+    <div id="moon"></div>
+    <div id="question">Bugün üzgün hissettin mi?</div>
+    <button id="yesButton" class="button">Evet</button>
+    <button id="noButton" class="button">Hayır</button>
+    <div id="message"></div>
 
-  <script>
-    const actions = document.getElementById('actions');
-    const btnEvet = document.getElementById('btn-evet');
-    const btnHayir = document.getElementById('btn-hayir');
-    const result = document.getElementById('result');
+    <script>
+        function createStars() {
+            for (let i = 0; i < 50; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                const size = Math.random() * 3 + 1;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                star.style.left = `${Math.random() * 100}vw`;
+                star.style.top = `${Math.random() * 100}vh`;
+                star.style.animationDelay = `${Math.random() * 1.5}s`;
+                document.body.appendChild(star);
+            }
+        }
+        createStars();
 
-    // İstenen mesaj
-    btnHayir.addEventListener('click', () => {
-      result.textContent = 'bende öyle düşünmüştüm :)';
-      if (navigator.vibrate) navigator.vibrate(10);
-    }, { passive: true });
+        const yesButton = document.getElementById('yesButton');
+        const noButton = document.getElementById('noButton');
+        const message = document.getElementById('message');
 
-    // Ayarlar (daha zor/yakalanmaz)
-    const PROXIMITY = 200;     // yaklaşma eşiği (px) — yüksek
-    const STEP       = 280;     // tek sıçrayış (px) — agresif
-    const PADDING    = 4;       // kenar tamponu
-    const COOLDOWN_MS= 110;     // iki sıçrayış arası minimum süre
+        function moveYesButton() {
+            const maxMove = Math.min(150, window.innerWidth / 4); // Scale movement for smaller screens
+            const viewportWidth = window.innerWidth - yesButton.offsetWidth - 20;
+            const viewportHeight = window.innerHeight - yesButton.offsetHeight - 20;
+            
+            const moveX = (Math.random() * maxMove * 2 - maxMove);
+            const moveY = (Math.random() * maxMove * 2 - maxMove);
+            
+            let newX = yesButton.offsetLeft + moveX;
+            let newY = yesButton.offsetTop + moveY;
+            
+            newX = Math.max(0, Math.min(newX, viewportWidth));
+            newY = Math.max(0, Math.min(newY, viewportHeight));
+            
+            yesButton.style.left = `${newX}px`;
+            yesButton.style.top = `${newY}px`;
+            yesButton.style.position = 'absolute';
+        }
 
-    let pointerX = -9999, pointerY = -9999;
-    let lastJump = 0;
+        yesButton.addEventListener('mouseenter', moveYesButton);
+        yesButton.addEventListener('touchstart', (e) => {
+            e.preventDefault(); // Prevent default touch behavior
+            moveYesButton();
+        });
 
-    // Pointer konumunu DAİMA izle (fare + touch)
-    window.addEventListener('pointermove', (e) => { pointerX = e.clientX; pointerY = e.clientY; }, { passive:true });
-    window.addEventListener('touchmove', (e) => {
-      const t = e.touches[0]; if (!t) return;
-      pointerX = t.clientX; pointerY = t.clientY;
-    }, { passive:true });
+        noButton.addEventListener('click', () => {
+            message.textContent = 'Bende öyle düşünmüştüm!';
+            message.style.display = 'block';
+            yesButton.style.display = 'none';
+            noButton.style.display = 'none';
+        });
 
-    // Buton üzerine gelinirse de derhal kaçsın
-    ['pointerenter','mouseenter','pointerdown','touchstart'].forEach(t=>{
-      btnEvet.addEventListener(t, (ev)=>{
-        const p = ('touches' in ev && ev.touches[0]) ? ev.touches[0] : ev;
-        jumpAway(p.clientX, p.clientY);
-        if (ev.cancelable) ev.preventDefault();
-        ev.stopPropagation();
-      }, { passive:false, capture:true });
-    });
-
-    // Tıklama olaylarını tamamen iptal et
-    ['click','mousedown'].forEach(t=>{
-      btnEvet.addEventListener(t, (ev)=>{
-        jumpAway(pointerX, pointerY);
-        if (ev.cancelable) ev.preventDefault();
-        ev.stopImmediatePropagation();
-        return false;
-      }, { passive:false, capture:true });
-    });
-
-    function clamp(v,min,max){ return Math.max(min, Math.min(max, v)); }
-    function rectWithin(cw,ch,w,h,x,y){
-      return { x: clamp(x, PADDING, cw - w - PADDING),
-               y: clamp(y, PADDING, ch - h - PADDING) };
-    }
-    function isOverlap(r1, r2){
-      return !(r1.right < r2.left || r1.left > r2.right || r1.bottom < r2.top || r1.top > r2.bottom);
-    }
-
-    function jumpAway(fromX, fromY){
-      const now = performance.now();
-      if (now - lastJump < COOLDOWN_MS) return; // hafif fren
-
-      const cRect = actions.getBoundingClientRect();
-      const eRect = btnEvet.getBoundingClientRect();
-      const hRect = btnHayir.getBoundingClientRect();
-
-      // merkezler ve kaçış yönü
-      const eCx = eRect.left + eRect.width/2, eCy = eRect.top + eRect.height/2;
-      let dx = eCx - fromX, dy = eCy - fromY;
-      if (Math.hypot(dx,dy) < 1){ const a = Math.random()*Math.PI*2; dx=Math.cos(a); dy=Math.sin(a); }
-      const len = Math.hypot(dx,dy);
-
-      let targetX = (eRect.left - cRect.left) + (dx/len)*STEP;
-      let targetY = (eRect.top  - cRect.top ) + (dy/len)*STEP;
-      let pos = rectWithin(cRect.width, cRect.height, eRect.width, eRect.height, targetX, targetY);
-
-      // "Hayır" ile çakışmayı engelle
-      let tries = 0;
-      while (tries < 24){
-        const future = {
-          left: cRect.left + pos.x, top: cRect.top + pos.y,
-          right: cRect.left + pos.x + eRect.width, bottom: cRect.top + pos.y + eRect.height
-        };
-        if (!isOverlap(future, hRect)) break;
-        const a = Math.random()*Math.PI*2;
-        const nx = (eRect.left - cRect.left) + Math.cos(a)*STEP;
-        const ny = (eRect.top  - cRect.top ) + Math.sin(a)*STEP;
-        pos = rectWithin(cRect.width, cRect.height, eRect.width, eRect.height, nx, ny);
-        tries++;
-      }
-
-      btnEvet.style.left = pos.x + 'px';
-      btnEvet.style.top  = pos.y + 'px';
-      lastJump = now;
-    }
-
-    // Sürekli yakınlık kontrolü (kaçma garantisi)
-    function loop(){
-      const eRect = btnEvet.getBoundingClientRect();
-      const eCx = eRect.left + eRect.width/2;
-      const eCy = eRect.top  + eRect.height/2;
-      const dist = Math.hypot(eCx - pointerX, eCy - pointerY);
-      if (dist < PROXIMITY){
-        jumpAway(pointerX, pointerY);
-      }
-      requestAnimationFrame(loop);
-    }
-    requestAnimationFrame(loop);
-
-    // İlk yüklemede imleç butona yakınsa hemen kaçır
-    window.addEventListener('load', ()=>{
-      // başlangıç konumunu güvenli rastgele yerleştir
-      const cRect = actions.getBoundingClientRect();
-      const eRect = btnEvet.getBoundingClientRect();
-      const hRect = btnHayir.getBoundingClientRect();
-      const space = { w:cRect.width - eRect.width - PADDING*2, h:cRect.height - eRect.height - PADDING*2 };
-      for (let i=0;i<30;i++){
-        const x = PADDING + Math.random()*space.w;
-        const y = PADDING + Math.random()*space.h;
-        const future = { left:cRect.left+x, top:cRect.top+y, right:cRect.left+x+eRect.width, bottom:cRect.top+y+eRect.height };
-        if (!isOverlap(future, hRect)){ btnEvet.style.left = x+'px'; btnEvet.style.top = y+'px'; break; }
-      }
-      // imleç yakınsa anında kaç
-      setTimeout(()=>{ jumpAway(pointerX, pointerY); }, 30);
-    });
-  </script>
+        noButton.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            message.textContent = 'Bende öyle düşünmüştüm!';
+            message.style.display = 'block';
+            yesButton.style.display = 'none';
+            noButton.style.display = 'none';
+        });
+    </script>
 </body>
 </html>
